@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Flowgraph test</title>
+    <meta name="description" content="Flowgraph test">
+    <meta name="author" content="Thomas Fischer">
+
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/easeljs-0.7.1.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/flow.js"></script>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<style type="text/css">
+* { margin:0; padding:0; } /* to remove the top and left whitespace */
+
+html, body { width:100%; height:100%; background-color:#fff; } /* just to be sure these are full screen*/
+
+canvas { display:block; } /* To remove the scrollbars */
+</style>
+
+<script>
+(function() {
+    var canvas = document.getElementById('canvas'), context = canvas.getContext('2d');
+    var rootStage = new createjs.Stage('canvas');
+    var graph = null;
+
+    createjs.Ticker.setInterval(10);
+    createjs.Ticker.addEventListener('tick', function tick(event) { drawStuff(rootStage); } );
+
+    rootStage.addEventListener('repaint', function tick() { drawStuff(rootStage); } );
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', resizeCanvas, false);
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        //rootStage.update();
+        //drawStuff(rootStage);
+        rootStage.dispatchEvent('repaint');
+    }
+    resizeCanvas();
+
+    graph = new FGraph(rootStage);
+
+    // easelJS debug
+    var debugShape = null;
+    var debugLabel = null;
+    var debugContainer = null;
+    
+    function drawDebug(stage) {
+        if(debugContainer == null) {
+            debugContainer = new createjs.Container();
+            stage.addChild(debugContainer);
+        }
+
+        if(debugShape == null) {
+            debugShape = new createjs.Shape();
+            debugContainer.addChild(debugShape);
+        }
+        debugShape.graphics.clear();
+        debugShape.graphics.setStrokeStyle(1).beginStroke("#ddd").moveTo(0,0).lineTo(stage.canvas.width, stage.canvas.height).lineTo(stage.canvas.width, 0).lineTo(0, stage.canvas.height).endStroke();
+        debugShape.graphics.setStrokeStyle(1).beginStroke("#ddd").drawRoundRect(4, 4, stage.canvas.width - 8, stage.canvas.height - 8, 8);
+
+        var str = stage.canvas.width + ' x ' + stage.canvas.height;
+        //str += ' @ ' + Math.round(createjs.Ticker.getMeasuredFPS()) + ' fps, ' + Math.round(createjs.Ticker.getMeasuredTickTime()) + ' ms, ' + createjs.Ticker.getTicks() + ' ticks';
+        if(debugLabel == null) {
+            debugLabel = new createjs.Text(str, "12px Verdana bold", "#000");
+            debugLabel.textAlign = "center";
+            debugContainer.addChild(debugLabel);
+        }
+        debugLabel.text = str;
+        debugLabel.x = stage.canvas.width * 0.5;
+        debugLabel.y = stage.canvas.height * 0.5 - debugLabel.getMeasuredHeight() * 0.5;
+    }
+
+    rootStage.enableMouseOver(20);
+
+
+    graph.testSetup();
+
+    //$('<button style="position:absolute;bottom:0px;left:0px;">Add</button>').appendTo($('body')).click(function(){
+        //graph.testSetup();
+        //rootStage.dispatchEvent('repaint');
+    //});
+
+    function drawStuff(stage) {
+        //drawDebug(stage);
+
+        if(graph)
+            graph.update();
+
+        stage.update();
+    }
+
+    rootStage.dispatchEvent('repaint');
+
+})();
+</script>
+</body>
+</html>
