@@ -1,7 +1,7 @@
 jsflowgraph
 ===========
 
-![](https://raw.github.com/BeamNG/jsflowgraph/preview.png)
+![](https://raw.githubusercontent.com/BeamNG/jsflowgraph/master/preview.png)
 
 FlowGraph prototype - unfinished: does not support live drag and drop of wires
 
